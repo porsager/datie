@@ -9,7 +9,7 @@ export default [
       file: 'dist/datie.umd.js',
       exports: 'default',
       format: 'umd',
-      name: 's',
+      name: 'datie',
       sourcemap: true
     },
     plugins: [
@@ -22,7 +22,7 @@ export default [
       file: 'dist/datie.umd.min.js',
       exports: 'default',
       format: 'umd',
-      name: 's',
+      name: 'datie',
       sourcemap: true
     },
     plugins: [
