@@ -1,0 +1,23 @@
+{
+  "name": "datie",
+  "version": "0.0.0",
+  "description": "Small template string based date formatter for the browser and Node.js.",
+  "main": "dist/dday.umd.js",
+  "module": "index.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "author": "Rasmus Porsager <rasmus@porsager.com>",
+  "repository": "porsager/datie",
+  "license": "WTFPL",
+  "devDependencies": {
+    "rollup": "2.10.0",
+    "rollup-plugin-buble": "0.19.8",
+    "rollup-plugin-filesize": "9.0.0",
+    "rollup-plugin-terser": "5.3.0"
+  }
+}
