@@ -1,6 +1,6 @@
 {
   "name": "datie",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Small template string based date formatter for the browser and Node.js.",
   "main": "dist/datie.umd.js",
   "module": "index.js",
