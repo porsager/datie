@@ -1,3 +1,5 @@
+;(function(g){typeof exports==="object"&&typeof module!=="undefined"?module.exports=datie:((g?g:self).datie=datie);
+
 const cache = new Map()
 
 function format(X) {
@@ -47,13 +49,13 @@ function format(X) {
   return f
 }
 
-d.names = {
+datie.names = {
   days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 }
-d.format = format(d)
+datie.format = format(datie)
 
-export default function d(xs) {
+function datie(xs) {
   if (cache.has(xs))
     return cache.get(xs)
 
@@ -62,7 +64,7 @@ export default function d(xs) {
 
   let l = 0
   for (let i = 0; i < f.length; i++)
-    f[i] !== f[i + 1] && (fns.push(d.format[f.slice(l, i + 1)] || f.slice(l, i + 1)), l = i + 1)
+    f[i] !== f[i + 1] && (fns.push(datie.format[f.slice(l, i + 1)] || f.slice(l, i + 1)), l = i + 1)
 
   const fn = function(x) {
     x = new Date(x)
@@ -73,3 +75,4 @@ export default function d(xs) {
   cache.set(xs, fn)
   return fn
 }
+})(this);

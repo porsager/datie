@@ -2,23 +2,27 @@
   "name": "datie",
   "version": "1.0.3",
   "description": "Small template string based date formatter for the browser and Node.js.",
-  "main": "dist/datie.umd.js",
-  "module": "index.js",
-  "scripts": {
-    "build": "rollup -c",
-    "prepublishOnly": "npm run build"
+  "type": "module",
+  "module": "datie.js",
+  "browser": "datie.umd.js",
+  "main": "datie.umd.js",
+  "exports": {
+    "import": "./datie.js",
+    "default": "./datie.umd.js"
   },
-  "files": [
-    "dist",
-    "index.js"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/porsager/datie.git"
+  },
+  "scripts": {
+    "test": "echo please PR",
+    "prepublishOnly": "npm run build",
+    "build": "node -e 'fs.writeFileSync(\"datie.umd.js\",\";(function(g){\"+fs.readFileSync(\"datie.js\",\"utf8\").replace(\"export default datie\",`typeof exports===\"object\"&&typeof module\\!==\"undefined\"?module.exports=datie:((g?g:self).datie=datie);`) + \"})(this);\")'"
+  },
   "author": "Rasmus Porsager <rasmus@porsager.com>",
-  "repository": "porsager/datie",
   "license": "WTFPL",
-  "devDependencies": {
-    "rollup": "2.10.0",
-    "rollup-plugin-buble": "0.19.8",
-    "rollup-plugin-filesize": "9.0.0",
-    "rollup-plugin-terser": "5.3.0"
-  }
+  "bugs": {
+    "url": "https://github.com/porsager/datie/issues"
+  },
+  "homepage": "https://github.com/porsager/datie#readme"
 }
