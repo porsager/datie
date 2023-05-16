@@ -1,6 +1,6 @@
 {
   "name": "datie",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Small template string based date formatter for the browser and Node.js.",
   "type": "module",
   "module": "datie.js",
