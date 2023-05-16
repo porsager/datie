@@ -10,10 +10,6 @@
     "import": "./datie.js",
     "default": "./datie.umd.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/porsager/datie.git"
-  },
   "scripts": {
     "test": "echo please PR",
     "prepublishOnly": "npm run build",
@@ -21,6 +17,7 @@
   },
   "author": "Rasmus Porsager <rasmus@porsager.com>",
   "license": "WTFPL",
+  "repository": "porsager/datie",
   "bugs": {
     "url": "https://github.com/porsager/datie/issues"
   },
