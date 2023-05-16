@@ -32,7 +32,7 @@ function format(X) {
     m: x => x.getMinutes(),
     mm: x => pad(f.m(x)),
     s: x => x.getSeconds(),
-    ss: x => pad(f.m(x)),
+    ss: x => pad(f.s(x)),
     w: x => {
       x = new Date(x)
       x.setDate(x.getDate() - ((x.getDay() + 6) % 7) + 3)
