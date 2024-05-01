@@ -3,18 +3,16 @@
   "version": "2.0.1",
   "description": "Small template string based date formatter for the browser and Node.js.",
   "type": "module",
-  "module": "datie.js",
-  "browser": "datie.umd.js",
-  "main": "datie.umd.js",
-  "exports": {
-    "import": "./datie.js",
-    "default": "./datie.umd.js"
-  },
+  "main": "index.js",
   "scripts": {
-    "test": "echo please PR",
-    "prepublishOnly": "npm run build",
-    "build": "node -e 'fs.writeFileSync(\"datie.umd.js\",\";(function(g){\"+fs.readFileSync(\"datie.js\",\"utf8\").replace(\"export default datie\",`typeof exports===\"object\"&&typeof module\\!==\"undefined\"?module.exports=datie:((g?g:self).datie=datie);`) + \"})(this);\")'"
+    "test": "echo please PR"
   },
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "index.js"
+  ],
   "author": "Rasmus Porsager <rasmus@porsager.com>",
   "license": "WTFPL",
   "repository": "porsager/datie",
