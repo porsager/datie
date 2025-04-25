@@ -43,7 +43,11 @@ function format(X) {
       return 1 + Math.ceil((firstThursday - x) / weekMS)
     },
     ww: x => pad(f.w(x)),
-    o: (x, p) => ['', 'st', 'nd', 'rd'][p % 100 >> 3 ^ 1 && p % 10] || 'th'
+    o: (x, p) => ['', 'st', 'nd', 'rd'][p % 100 >> 3 ^ 1 && p % 10] || 'th',
+    Q: x  => Math.floor(x.getMonth()/3) + 1,
+    QQ: x  => pad(f.Q(x)),
+    QQQ: x  => 'Q' + f.Q(x),
+    QQQQ: x  => f.Q(x) + ['', 'st', 'nd', 'rd', 'th'][f.Q(x)] + ' quarter'
   }
 
   return f
