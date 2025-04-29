@@ -1,6 +1,8 @@
 export default datie
 
 const cache = new Map()
+const ordinals = ['', 'st', 'nd', 'rd']
+const ordinal = x => ordinals[x] || 'th'
 
 function format(X) {
   const weekMS = 1000 * 60 * 60 * 24 * 7
@@ -43,11 +45,11 @@ function format(X) {
       return 1 + Math.ceil((firstThursday - x) / weekMS)
     },
     ww: x => pad(f.w(x)),
-    o: (x, p) => ['', 'st', 'nd', 'rd'][p % 100 >> 3 ^ 1 && p % 10] || 'th',
+    o: (x, p) => ordinal(p % 100 >> 3 ^ 1 && p % 10),
     Q: x  => Math.floor(x.getMonth()/3) + 1,
     QQ: x  => pad(f.Q(x)),
     QQQ: x  => 'Q' + f.Q(x),
-    QQQQ: x  => f.Q(x) + ['', 'st', 'nd', 'rd', 'th'][f.Q(x)] + ' quarter'
+    QQQQ: x  => f.Q(x) + ordinal(f.Q(x)) + ' quarter'
   }
 
   return f
