@@ -3,6 +3,7 @@ export default datie
 const cache = new Map()
 const ordinals = ['', 'st', 'nd', 'rd']
 const ordinal = x => ordinals[x] || 'th'
+const sec = [31536000, 2592000, 604800, 86400, 3600, 60, 1]
 
 function format(X) {
   const weekMS = 1000 * 60 * 60 * 24 * 7
@@ -49,7 +50,8 @@ function format(X) {
     Q: x  => Math.floor(x.getMonth()/3) + 1,
     QQ: x  => pad(f.Q(x)),
     QQQ: x  => 'Q' + f.Q(x),
-    QQQQ: x  => f.Q(x) + ordinal(f.Q(x)) + ' quarter'
+    QQQQ: x  => f.Q(x) + ordinal(f.Q(x)) + ' quarter',
+    R: x => X.relative(x)
   }
 
   return f
@@ -57,8 +59,10 @@ function format(X) {
 
 datie.names = {
   days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  uot: ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
 }
+
 datie.format = format(datie)
 
 function datie(xs) {
@@ -80,4 +84,24 @@ function datie(xs) {
 
   cache.set(xs, fn)
   return fn
+}
+
+datie.relative = function(date, reference = new Date()) {
+
+  let ss = Math.floor((reference - new Date(date)) / 1000);
+  const future = ss < 0;
+  ss = Math.abs(ss)
+
+  if (ss < 5)
+    return future ? 'in a few seconds' : 'a few seconds ago'
+
+  for (let i = 0, c, u; i < datie.names.uot.length; i++) {
+    c = Math.floor(ss / sec[i]);
+    if (c >= 1) {
+      u = datie.names.uot[i] + (c !== 1 ? 's' : '')
+      return future ? ('in ' + c + ' ' + u) : (c + ' ' + u + ' ago')
+    }
+  }
+
+  return 'now';
 }
