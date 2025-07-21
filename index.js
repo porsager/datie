@@ -60,7 +60,7 @@ function format(X) {
 datie.names = {
   days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  uot: ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
+  periods: ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
 }
 
 datie.format = format(datie)
@@ -95,10 +95,10 @@ datie.relative = function(date, reference = new Date()) {
   if (ss < 5)
     return future ? 'in a few seconds' : 'a few seconds ago'
 
-  for (let i = 0, c, u; i < datie.names.uot.length; i++) {
+  for (let i = 0, c, u; i < datie.names.periods.length; i++) {
     c = Math.floor(ss / sec[i]);
     if (c >= 1) {
-      u = datie.names.uot[i] + (c !== 1 ? 's' : '')
+      u = datie.names.periods[i] + (c !== 1 ? 's' : '')
       return future ? ('in ' + c + ' ' + u) : (c + ' ' + u + ' ago')
     }
   }
