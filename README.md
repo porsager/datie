@@ -7,7 +7,6 @@ Small template string based date formatter for the browser and Node.js. It suppo
 Follows Unicode LDML date patterns (https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table) with additions:
 - `o`: Ordinal suffix (e.g., `1st`, `2nd`) for numbers like day or month.
 - `R`: Relative time (e.g., `1 minute ago`, `in 2 days`).
-- `S`: Season number (1-4); `SS`: Padded; `SSS`: Name (e.g., `Summer`).
 
 # Usage
 
@@ -71,11 +70,6 @@ Comprehensive list of format specifiers, with descriptions and examples (using J
   - `QQ`: Padded quarter → '03'
   - `QQQ`: Prefixed quarter → 'Q3'
   - `QQQQ`: Full with ordinal → '3rd quarter'
-
-- **Season**:
-  - `S`: Season (1=Spring-4=Winter) → '3'
-  - `SS`: Padded season → '03'
-  - `SSS`: Season name → 'Summer'
 
 - **Ordinal Suffix**:
   - `o`: Suffix for prior number (e.g., `do` → '19th', `Qo` → '3rd')

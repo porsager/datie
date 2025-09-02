@@ -126,15 +126,3 @@ test('yyyy-MM-dd R2Y')(datie`yyyy-MM-dd R2Y`(now.getTime() + 1 * 320 * 86400 * 1
 test('yyyy-MM-dd R2Y')(datie`yyyy-MM-dd R2Y`(now.getTime() + 1 * 365 * 86400 * 1000));
 test('yyyy-MM-dd R2Y')(datie`yyyy-MM-dd R2Y`(now.getTime() + 2 * 365 * 86400 * 1000));
 
-
-title('SEASONS');
-
-const date = new Date(2025, 6, 22, 12, 0, 0)
-
-test('S')(datie`S`(date));
-test('SS')(datie`SS`(date));
-test('SSS')(datie`SSS`(new Date('2025-09-23T12:00:00+02:00')));
-test('SSS')(datie`SSS`(new Date('2025-12-22T12:00:00+01:00')));
-test('S')(datie`S`(new Date('2025-03-19T12:00:00+01:00')), '4');
-test('SSS')(datie`SSS`(new Date('2025-06-20T12:00:00+02:00')));
-

@@ -111,23 +111,6 @@ const datie: {
       nd: string,
       rd: string,
       th: string
-    ];
-    /**
-     * Seasons - Starting from Spring
-     *
-     * @default
-     * [
-     *  'Spring',
-     *  'Summer',
-     *  'Autumn',
-     *  'Winter'
-     * ]
-     */
-    seasons: [
-      Spring: string,
-      Summer: string,
-      Autumn: string,
-      Winter: string
     ]
   }
 }

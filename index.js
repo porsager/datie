@@ -5,7 +5,7 @@ const regexPast = /^R(\d+(?:[HDMY])?)?\s*(.*)$/
 const cache = new Map()
 const ordinals = ['', 'st', 'nd', 'rd', 'th']
 const ordinal = x => ordinals[x] || ordinals[4]
-const sec = [31536000, 2592000, 86400, 3600, 60, 1]
+const sec = [31536000, 2592000, 604800, 86400, 3600, 60, 1]
 
 function format(X) {
   const weekMS = 604800000
@@ -49,18 +49,10 @@ function format(X) {
     },
     ww: x => pad(f.w(x)),
     o: (x, p) => ordinal(p % 100 >> 3 ^ 1 && p % 10),
-    Q: x  => Math.floor(x.getMonth()/3) + 1,
-    QQ: x  => pad(f.Q(x)),
-    QQQ: x  => 'Q' + f.Q(x),
-    QQQQ: x  => f.Q(x) + ordinal(f.Q(x)) + ' quarter',
-    S: x => {
-      const m = x.getMonth(), d = x.getDate()
-      return (m === 2 && d >= 20) || m === 3 || m === 4 || (m === 5 && d < 21) ? 1 :
-             (m === 5 && d >= 21) || m === 6 || m === 7 || (m === 8 && d < 23) ? 2 :
-             (m === 8 && d >= 23) || m === 9 || m === 10 || (m === 11 && d < 22) ? 3 : 4
-    },
-    SS: x => pad(f.S(x)),
-    SSS: x => X.names.seasons[f.S(x)-1],
+    Q: x => Math.floor(x.getMonth()/3) + 1,
+    QQ: x => pad(f.Q(x)),
+    QQQ: x => 'Q' + f.Q(x),
+    QQQQ: x => f.Q(x) + ordinal(f.Q(x)) + ' quarter',
     R: x => parseRelative(x)
   }
 
@@ -70,8 +62,7 @@ function format(X) {
 datie.names = {
   days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  periods: ['year', 'month', 'day', 'hour', 'minute', 'second'],
-  seasons: ['Spring', 'Summer', 'Autumn', 'Winter'],
+  periods: ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
   get ordinals() { return ordinals },
   set ordinals (o) { o.forEach((x, i) => ordinals.splice(i + 1, 1, x)) }
 }
@@ -115,10 +106,11 @@ function datie(xs) {
       unit = spec[spec.length - 1]
       const num = isNaN(unit) ? (unit = spec[spec.length - 1], +spec.slice(0, -1)) : (unit = 'm', +spec)
       threshold = num * (
-        unit === 'm' ? 60 :
-        unit === 'H' ? 3600 :
-        unit === 'D' ? 86400 :
-        unit === 'M' ? 2592000 : 31536000
+        unit === 'm' ? sec[5] :
+        unit === 'H' ? sec[4] :
+        unit === 'D' ? sec[3] :
+        unit === 'W' ? sec[2] :
+        unit === 'M' ? sec[1] : sec[0]
       ) * 1000
     }
     const fns = parseFormat(fallback || '')
@@ -149,6 +141,8 @@ function parseRelative(date, reference = new Date()) {
     return future ? 'in a few seconds' : 'a few seconds ago'
 
   for (let i = 0, c, u; i < datie.names.periods.length; i++) {
+    if (i === 2 && ss > 3 * sec[2])
+      continue
     c = Math.floor(ss / sec[i])
     if (c >= 1) {
       u = datie.names.periods[i] + (c !== 1 ? 's' : '')
