@@ -9,7 +9,7 @@ const datie: {
    * Date format
    *
    * @example
-   * datie`yyyy-MM-dd HH:mm`(new Date()) // -> 2025-07-22 11:20
+   * d`yyyy-MM-dd HH:mm`(new Date()) // -> 2025-07-22 11:20
    */
   (format: TagLiteral, ...interpolate: Interpolate): (date: Date | string | number) => string;
   /**

@@ -13,13 +13,13 @@ Follows Unicode LDML date patterns (https://www.unicode.org/reports/tr35/tr35-da
 Datie uses tagged template literals to define formats, returning a reusable function that accepts a Date object or compatible string. Formatters are cached by string.
 
 ```js
-import datie from 'datie'
+import d from 'datie'
 
 const string = '2020-05-13T08:34:30.911Z'
 const date = new Date(string)
 
-datie`d/M-y hh:mm`(string) // '13/5-2020 08:34'
-datie`d/M-y hh:mm`(date)    // '13/5-2020 08:34'
+d`d/M-y hh:mm`(string) // '13/5-2020 08:34'
+d`d/M-y hh:mm`(date)    // '13/5-2020 08:34'
 ```
 
 ## Supported Specifiers
@@ -78,15 +78,18 @@ Comprehensive list of format specifiers, with descriptions and examples (using J
 
 Use `R` for relative time vs. current time (`new Date()`). Handles past (`ago`) and future (`in`), with pluralization and `<5s` as `a few seconds ago`/`in a few seconds`. Threshold for `now` is under 5 seconds.
 
+There is an optional 2nd parameter accepted if you want to provide a different reference point instead of Date.now().
+
 Examples (assuming current time is July 22, 2025, 12:00:00):
 
 ```js
-const pastDate = new Date('2025-07-22T11:55:00')  // 5 minutes ago
-const futureDate = new Date('2025-07-22T12:10:00') // 10 minutes future
+const reference = new Date('2025-07-22T11:55:00')
+const pastDate = reference.getTime() - 1000 * 60 * 5  // 5 minutes ago
+const futureDate = reference.getTime() + 1000 * 60 * 10 // 10 minutes future
 
-datie`R`(pastDate)    // '5 minutes ago'
-datie`R`(futureDate)  // 'in 10 minutes'
-datie`R`(new Date())  // 'now' (or 'a few seconds ago' if slight offset)
+d`R`(pastDate, reference)    // '5 minutes ago'
+d`R`(futureDate, reference)  // 'in 10 minutes'
+d`R`(new Date())             // 'now' (or 'a few seconds ago' if slight offset)
 ```
 
 ## Relative Fallbacks
@@ -105,21 +108,21 @@ Examples (current: July 22, 2025, 12:00:00):
 const recentPast = new Date('2025-07-22T11:00:00')  // 1 hour ago
 const oldPast = new Date('2025-07-20T12:00:00')     // >1 day ago
 
-datie`R1D yyyy-MM-dd HH:mm`(recentPast)  // '1 hour ago'
-datie`R1D yyyy-MM-dd HH:mm`(oldPast)     // '2025-07-20 12:00'
+d`R1D yyyy-MM-dd HH:mm`(recentPast)  // '1 hour ago'
+d`R1D yyyy-MM-dd HH:mm`(oldPast)     // '2025-07-20 12:00'
 
 // Future fallback
 const nearFuture = new Date('2025-07-22T15:00:00')  // 3 hours future
 const farFuture = new Date('2025-08-22T12:00:00')   // >15 days future
 
-datie`yyyy-MM-dd HH:mm R3H`(nearFuture)  // 'in 3 hours'
-datie`yyyy-MM-dd HH:mm R3H`(farFuture)   // '2025-08-22 12:00'
+d`yyyy-MM-dd HH:mm R3H`(nearFuture)  // 'in 3 hours'
+d`yyyy-MM-dd HH:mm R3H`(farFuture)   // '2025-08-22 12:00'
 
 // Other specs
-datie`yyyy-MM-dd R15D`(farFuture)        // '2025-08-22' (31 days >15D)
-datie`yyyy-MM-dd R6M`(new Date('2025-12-22'))  // 'in 5 months'
-datie`yyyy-MM-dd R1Y`(new Date('2026-07-22'))  // 'in 1 year'
-datie`yyyy-MM-dd R1Y`(new Date('2027-01-01'))  // '2027-01-01' (>1Y)
+d`yyyy-MM-dd R15D`(farFuture)        // '2025-08-22' (31 days >15D)
+d`yyyy-MM-dd R6M`(new Date('2025-12-22'))  // 'in 5 months'
+d`yyyy-MM-dd R1Y`(new Date('2026-07-22'))  // 'in 1 year'
+d`yyyy-MM-dd R1Y`(new Date('2027-01-01'))  // '2027-01-01' (>1Y)
 ```
 
 ## Localization
@@ -127,7 +130,7 @@ datie`yyyy-MM-dd R1Y`(new Date('2027-01-01'))  // '2027-01-01' (>1Y)
 Override names for days, months, seasons (relative time fixed in English):
 
 ```js
-datie.names = {
+d.names = {
   days: ['Domingo', 'Lunes', /* Spanish days */],
   months: ['Enero', 'Febrero', /* Spanish months */],
   seasons: ['Primavera', 'Verano', 'Otoño', 'Invierno'],

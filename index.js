@@ -1,7 +1,7 @@
 export default datie
 
-const regexFuture = /^(.*)\s*R(\d+(?:[HDMY])?)?$/
-const regexPast = /^R(\d+(?:[HDMY])?)?\s*(.*)$/
+const regexFuture = /^(.*)\s*R(\d+(?:[MHDY])?)?$/
+const regexPast = /^R(\d+(?:[MHDY])?)?\s*(.*)$/
 const cache = new Map()
 const ordinals = ['', 'st', 'nd', 'rd', 'th']
 const ordinal = x => ordinals[x] || ordinals[4]
@@ -53,7 +53,7 @@ function format(X) {
     QQ: x => pad(f.Q(x)),
     QQQ: x => 'Q' + f.Q(x),
     QQQQ: x => f.Q(x) + ordinal(f.Q(x)) + ' quarter',
-    R: x => parseRelative(x)
+    R: (x, b) => parseRelative(x, b)
   }
 
   return f
@@ -69,81 +69,86 @@ datie.names = {
 
 datie.format = format(datie)
 
-function parseFormat(formatStr, X = datie) {
+function parseFormat(x, X = datie) {
   const fns = []
   let l = 0
-  for (let i = 0; i < formatStr.length; i++)
-    if (formatStr[i] !== formatStr[i + 1])
-      fns.push(X.format[formatStr.slice(l, i + 1)] || formatStr.slice(l, i + 1)), l = i + 1
+  for (let i = 0; i < x.length; i++)
+    if (x[i] !== x[i + 1])
+      fns.push(X.format[x.slice(l, i + 1)] || x.slice(l, i + 1)), l = i + 1
   return fns
 }
 
-function datie(xs) {
-  const formatStr = xs[0], key = formatStr
-  if (cache.has(key))
-    return cache.get(key)
-
-  let fn
-    , isPast = regexPast.test(key)
-    , isFuture = regexFuture.test(key)
-
-  if (!isPast && !isFuture) {
-    const fns = parseFormat(formatStr)
-    fn = function (x) {
-      x = new Date(x)
+function datie([x]) {
+  if (cache.has(x))
+    return cache.get(x)
+  
+  const R = x.indexOf('R')
+  
+  if (R === -1) {
+    const fns = parseFormat(x)
+    const fn = function (date) {
+      date instanceof Date || (date = new Date(date))
       let last
-      return fns.map(fn => last = typeof fn === 'function' ? fn(x, last) : fn).join('')
+      return fns.map(fn => last = typeof fn === 'function' ? fn(date, last) : fn).join('')
     }
-  } else {
-    const m = isPast ? formatStr.match(regexPast) : formatStr.match(regexFuture)
-    let spec
-      , unit
-      , fallback
-      , threshold = Infinity
-
-    isPast ? (spec = m[1], fallback = m[2]) : (spec = m[2], fallback = m[1])
-    if (spec) {
-      unit = spec[spec.length - 1]
-      const num = isNaN(unit) ? (unit = spec[spec.length - 1], +spec.slice(0, -1)) : (unit = 'm', +spec)
-      threshold = num * (
-        unit === 'm' ? sec[5] :
-        unit === 'H' ? sec[4] :
-        unit === 'D' ? sec[3] :
-        unit === 'W' ? sec[2] :
-        unit === 'M' ? sec[1] : sec[0]
-      ) * 1000
-    }
-    const fns = parseFormat(fallback || '')
-
-    fn = function(x) {
-      x = new Date(x)
-      const diff = new Date() - x, abs = Math.abs(diff)
-      // Apply relative formatting only if within threshold and correct direction
-      if (isPast && diff >= 0 && abs < threshold || isFuture && diff <= 0 && abs < threshold) {
-        return parseRelative(x)
-      }
-
-      let last
-      return fns.map(fn => last = typeof fn === 'function' ? fn(x, last) : fn).join('')
-    }
+    cache.set(x, fn)
+    return fn
   }
+  
+  const past = R === 0
+      , future = !past || x.length === 1
+      , m = past ? x.match(regexPast) : x.match(regexFuture)
+  
+  let threshold = Infinity
 
-  cache.set(key, fn)
+  const spec = m[past ? 1 : 2]
+      , fallback = m[past ? 2 : 1]
+    
+  if (spec) {
+    let unit = spec[spec.length - 1]
+    const num = isNaN(unit) 
+      ? (unit = spec[spec.length - 1], +spec.slice(0, -1)) 
+      : (unit = 'M', +spec)
+    
+    threshold = num * (
+      unit === 'M' ? sec[5] :
+      unit === 'H' ? sec[4] :
+      unit === 'D' ? sec[3] :
+      unit === 'W' ? sec[2] :
+      sec[0]
+    ) * 1000
+  }
+  
+  const fns = parseFormat(fallback || '')
+
+  const fn = function(date, b = new Date()) {
+    date instanceof Date || (date = new Date(date))
+    b instanceof Date || (b = new Date(b))
+    const diff = b - date
+        , abs = Math.abs(diff)
+    
+    if (past && diff >= 0 && abs <= threshold || future && diff <= 0 && abs <= threshold)
+      return parseRelative(date, b)
+
+    let last
+    return fns.map(fn => last = typeof fn === 'function' ? fn(date, last) : fn).join('')
+  }
+  
+  cache.set(x, fn)
   return fn
 }
 
-function parseRelative(date, reference = new Date()) {
-  let ss = Math.floor((reference - new Date(date)) / 1000)
+function parseRelative(date, reference = Date.now()) {
+  let ss = Math.floor((reference - new Date(date).getTime()) / 1000)
   const future = ss < 0
   ss = Math.abs(ss)
-
   if (ss < 5)
-    return future ? 'in a few seconds' : 'a few seconds ago'
+    return ss === 0 ? 'now' : ss < 0 ? 'in a few seconds' : 'a few seconds ago'
 
   for (let i = 0, c, u; i < datie.names.periods.length; i++) {
     if (i === 2 && ss > 3 * sec[2])
       continue
-    c = Math.floor(ss / sec[i])
+    c = ~~(ss / sec[i])
     if (c >= 1) {
       u = datie.names.periods[i] + (c !== 1 ? 's' : '')
       return future ? `in ${c} ${u}` : `${c} ${u} ago`
