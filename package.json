@@ -4,14 +4,16 @@
   "description": "Small template string based date formatter for the browser and Node.js.",
   "type": "module",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "test": "echo please PR"
+    "test": "sin test --ci --headless"
   },
   "engines": {
     "node": ">=12"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "indes.d.ts"
   ],
   "author": "Rasmus Porsager <rasmus@porsager.com>",
   "license": "WTFPL",
